@@ -123,9 +123,9 @@
     <img class="mark" src="logo.png" alt="lookover">
     <div class="eyebrow">look over your shoulder &nbsp;👀</div>
     <h1>Ask one terminal<br>what <span class="g">the other is doing</span>.</h1>
-    <p class="lead">Every Claude Code session runs blind to the others. <b>lookover</b> lets you
-      reference another terminal, by name or by description, and injects its context automatically.
-      All local, via hooks.</p>
+    <p class="lead">When you have Claude open in several terminals, each one only knows about itself.
+      <b>lookover</b> lets you just mention another one, and it brings over what's happening there,
+      so you don't have to go find it yourself. Everything stays on your machine.</p>
     <div class="cta">
       <a class="btn primary" href="#install">Install</a>
       <a class="btn ghost" href="https://github.com/Espigah/lookover">View on GitHub</a>
@@ -166,31 +166,31 @@ current skill: oncall-patrolman
 
   <section id="how">
     <h2>How it works</h2>
-    <p class="sub">Three pieces, all local. No daemon, no server.</p>
+    <p class="sub">Three simple steps, all on your machine. Nothing running in the background.</p>
     <div class="grid g3">
-      <div class="card"><span class="n">1</span><h3>Capture</h3>
-        <p>A lightweight hook (100% Go, zero tokens) records a tight digest of each session: topics, the skill in use, facts. Never stores verbatim content.</p></div>
-      <div class="card"><span class="n">2</span><h3>Resolve</h3>
-        <p>When you mention another terminal, it scans the live sessions and ranks by name, topics, repo and skill. Finds the right one, or asks you to disambiguate.</p></div>
-      <div class="card"><span class="n">3</span><h3>Inject</h3>
-        <p>The target session's context enters your prompt as data (anti-injection envelope). Claude answers already knowing what the other one did.</p></div>
+      <div class="card"><span class="n">1</span><h3>It takes notes</h3>
+        <p>Each terminal quietly keeps short notes on what it's up to, what you asked and what it's working on. Nothing heavy, and no full text is kept.</p></div>
+      <div class="card"><span class="n">2</span><h3>It finds the right one</h3>
+        <p>When you mention another terminal, it picks the one you mean, by its name or by what it's working on. If it's not sure, it asks you.</p></div>
+      <div class="card"><span class="n">3</span><h3>It brings the context over</h3>
+        <p>It hands that to Claude as background info, so the answer already takes into account what the other terminal was doing.</p></div>
     </div>
   </section>
 
   <section>
-    <h2>Two levels of context</h2>
-    <p class="sub">Cheap by default, deep when you need it.</p>
+    <h2>A quick peek, or the whole thing</h2>
+    <p class="sub">Light by default, detailed when you ask for it.</p>
     <div class="grid g2">
-      <div class="card"><h3>Summary</h3>
-        <p>Topics and what was asked, for fast identification. This is what gets injected most of the time, at minimal token cost.</p></div>
-      <div class="card"><h3>Full content</h3>
-        <p>Ask for "the full text", "verbatim", "what was written" and lookover reads the target session's real transcript and injects the content word-for-word.</p></div>
+      <div class="card"><h3>A quick peek</h3>
+        <p>A short note of what the other terminal is about. This is what you get most of the time, fast and out of the way.</p></div>
+      <div class="card"><h3>The whole thing</h3>
+        <p>Ask for "the full text", "what was written", "the whole thing" and lookover pulls the actual text from the other terminal and shows it to you word for word.</p></div>
     </div>
   </section>
 
   <section id="install">
     <h2>Install</h2>
-    <p class="sub">Requires Go 1.21+ and Claude Code. <code>init</code> shows the settings.json diff and only applies after you confirm.</p>
+    <p class="sub">Requires Go and Claude Code. It shows you exactly what it will change and only goes ahead once you say yes.</p>
     <pre class="cmd"><span class="muted"># clone and build</span>
 git clone https://github.com/Espigah/lookover.git
 cd lookover
@@ -198,8 +198,8 @@ go build -o ~/.local/bin/lookover ./cmd/lookover
 
 <span class="muted"># register the hooks (interactive, with dry-run + backup)</span>
 lookover init</pre>
-    <p class="note">Roll back anytime with <code>lookover uninstall</code>. Instant kill switch:
-      <code>touch ~/.claude/lookover/disabled</code>.</p>
+    <p class="note">Changed your mind? <code>lookover uninstall</code> undoes everything. To pause it
+      on the spot: <code>touch ~/.claude/lookover/disabled</code>.</p>
   </section>
 
   <section>
@@ -212,14 +212,14 @@ lookover status                 <span class="muted"># adoption: live vs covered<
   </section>
 
   <section>
-    <h2>Built to stay out of your way</h2>
-    <p class="sub">It runs on every prompt, and it's designed to be invisible when it isn't needed.</p>
+    <h2>Stays out of your way</h2>
+    <p class="sub">It only speaks up when you ask about another terminal.</p>
     <ul class="clean">
-      <li><b>Zero cost in normal use:</b> with no reference to another terminal, it injects nothing.</li>
-      <li><b>Never breaks Claude:</b> panic recovery, anti-hang watchdog, always exits cleanly.</li>
-      <li><b>Anti prompt-injection:</b> the summary never stores verbatim output; everything is enveloped and sanitized.</li>
-      <li><b>No server:</b> one file per session, atomic writes, resolution via a local scan.</li>
-      <li><b>Truly local:</b> nothing leaves your machine except the optional LLM compaction (off by default).</li>
+      <li><b>Invisible when unused:</b> if you're not asking about another terminal, it does nothing.</li>
+      <li><b>Never gets in the way:</b> it can't slow Claude down or break your session.</li>
+      <li><b>Safe by design:</b> whatever comes from another terminal is treated as background info, never as instructions.</li>
+      <li><b>Nothing to manage:</b> no extra app or service running in the background.</li>
+      <li><b>Stays with you:</b> everything is kept on your machine.</li>
     </ul>
   </section>
 

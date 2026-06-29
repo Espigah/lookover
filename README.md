@@ -20,10 +20,10 @@
 
 ---
 
-Every Claude Code session runs blind to the others: the Claude in terminal A can't see terminal B.
-**lookover** closes that gap. You reference another terminal, by name or by description, and its
-context enters your prompt before Claude answers, like glancing over your own shoulder at the
-session next to you.
+When you have Claude open in several terminals, each one only knows about itself, the Claude in
+terminal A can't see terminal B. **lookover** closes that gap. Just mention another terminal, by its
+name or by what it's doing, and it brings over what's happening there before Claude answers, like
+glancing over your own shoulder at the session next to you.
 
 ```
 you:  based on the slack-bridge-on-2 terminal, what was the last PR we reviewed?
@@ -32,24 +32,22 @@ you:  in the terminal where I handle on-call, why wasn't the xpto alert handled?
 
 ## How it works
 
-- **Capture (100% Go, zero tokens):** a lightweight hook records a tight digest of each session
-  (topics extracted from the prompt, the skill in use, facts) in
-  `~/.claude/lookover/<sessionId>.*.json`. Never stores verbatim content.
-- **Resolve:** when it detects you mentioned another terminal, it scans `~/.claude/sessions/`
-  (native) plus the metas and ranks by lexical score (name > topics > repo > fact > skill). Finds
-  the right session, returns a shortlist on a tie, or tells you which ones are open.
-- **Inject:** the context enters as `additionalContext`, inside an anti-injection envelope
-  (marked as data, not instructions) and sanitized.
+- **It takes notes:** each terminal quietly keeps short notes on what it's doing, what you asked and
+  what it's working on. Nothing heavy, and no full text is kept.
+- **It finds the right one:** when you mention another terminal, it picks the one you mean, by its
+  name or by what it's working on. If it's not sure, it offers you a short list to choose from.
+- **It brings the context over:** that goes to Claude as background info (kept clearly separate, so
+  it's never read as commands), and Claude answers already knowing what the other terminal did.
 
-## Two levels of context
+## A quick peek, or the whole thing
 
-| You write | What gets injected |
+| You write | What you get |
 |---|---|
-| *"what did terminal X do?"* | **summary**: topics + asks (cheap, for identification) |
-| *"show me the **full text** from terminal X"* | **verbatim content** read from the session's real transcript |
+| *"what did terminal X do?"* | a **quick peek**: a short note of what it's about |
+| *"show me the **full text** from terminal X"* | the **actual text** from that terminal, word for word |
 
-Deep mode is triggered by cues like *"full text", "verbatim", "what was written", "the whole thing",
-"in full"*.
+The full version kicks in when you ask for it, with words like *"full text", "what was written",
+"the whole thing", "in full"*.
 
 ## Install
 
@@ -79,14 +77,15 @@ Flags: `--llm` (enable the optional LLM compaction), `--shadow` (capture without
 | `lookover status` | local usage/adoption |
 | `lookover uninstall` | remove the hooks |
 
-## Robustness & security
+## Stays out of your way
 
-- **Zero cost in normal use:** with no reference to another terminal, the hook injects nothing.
-- **Never breaks Claude:** panic recovery, anti-hang watchdog, always exits 0.
-- **Anti prompt-injection:** the summary never stores verbatim output, only derived facts; injection
-  is always enveloped and sanitized.
-- **Kill switch:** `touch ~/.claude/lookover/disabled` (or `LOOKOVER_DISABLED=1`) turns it off instantly.
-- **No server:** one file per session, atomic writes, resolution via a local scan.
+- **Invisible when unused:** if you're not asking about another terminal, it does nothing.
+- **Never gets in the way:** it can't slow Claude down or break your session.
+- **Safe by design:** whatever comes from another terminal is treated as background info, never as
+  instructions.
+- **Off whenever you want:** `touch ~/.claude/lookover/disabled` (or `LOOKOVER_DISABLED=1`) pauses it
+  on the spot.
+- **Nothing to manage:** no extra app or service running in the background.
 
 ## Development
 
