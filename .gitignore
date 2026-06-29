@@ -1,0 +1,8 @@
+# binários compilados
+/lookover
+/cmd/lookover/lookover
+*.exe
+
+# artefatos de teste
+*.out
+coverage.*
