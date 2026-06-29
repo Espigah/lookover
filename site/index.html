@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="pt-br">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>lookover — contexto entre terminais do Claude Code</title>
-<meta name="description" content="Pergunte de um terminal o que outra sessão do Claude Code está fazendo. O contexto da outra sessão é injetado automaticamente — basta mencioná-la.">
+<title>lookover — context across your Claude Code terminals</title>
+<meta name="description" content="Look over your shoulder into your other Claude Code sessions. Ask one terminal what another is doing — its context is injected automatically. All local, via hooks.">
 
 <!-- favicons -->
 <link rel="icon" href="favicon.ico" sizes="any">
@@ -12,17 +12,17 @@
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
-<!-- Open Graph / redes sociais -->
+<!-- Open Graph / social -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="lookover — contexto entre terminais do Claude Code">
-<meta property="og:description" content="Pergunte de um terminal o que outra sessão do Claude Code está fazendo. O contexto entra automaticamente.">
+<meta property="og:title" content="lookover — context across your Claude Code terminals">
+<meta property="og:description" content="Look over your shoulder into your other Claude Code sessions. Ask one terminal what another is doing.">
 <meta property="og:url" content="https://espigah.github.io/lookover/">
 <meta property="og:image" content="https://espigah.github.io/lookover/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="lookover — contexto entre terminais do Claude Code">
-<meta name="twitter:description" content="Pergunte de um terminal o que outra sessão do Claude Code está fazendo.">
+<meta name="twitter:title" content="lookover — context across your Claude Code terminals">
+<meta name="twitter:description" content="Look over your shoulder into your other Claude Code sessions.">
 <meta name="twitter:image" content="https://espigah.github.io/lookover/og-image.png">
 
 <style>
@@ -53,7 +53,10 @@
   .hero{padding:46px 0 30px; text-align:center}
   .hero img.mark{width:128px;height:128px;border-radius:28px;
     box-shadow:0 20px 60px rgba(34,113,238,.25); margin-bottom:22px}
-  .hero h1{font-size:clamp(30px,5vw,52px); line-height:1.1; margin:.2em 0 .35em; letter-spacing:-.5px}
+  .eyebrow{display:inline-block; font-size:clamp(15px,2vw,18px); font-weight:700; letter-spacing:.3px;
+    background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;
+    border:1px solid var(--line); border-radius:999px; padding:7px 16px; margin-bottom:20px}
+  .hero h1{font-size:clamp(30px,5vw,52px); line-height:1.1; margin:.1em 0 .35em; letter-spacing:-.5px}
   .hero h1 .g{background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent}
   .hero p.lead{font-size:clamp(17px,2.4vw,21px); color:var(--muted); max-width:680px; margin:0 auto 26px}
   .cta{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
@@ -66,12 +69,10 @@
   .badges{margin-top:18px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap}
   .badges img{height:22px}
 
-  /* sections */
   section{padding:40px 0; border-top:1px solid var(--line)}
   h2{font-size:clamp(22px,3vw,30px); margin:0 0 6px; letter-spacing:-.3px}
   .sub{color:var(--muted); margin:0 0 26px}
 
-  /* chat example */
   .demo{background:var(--panel); border:1px solid var(--line); border-radius:16px; overflow:hidden}
   .demo .bar{display:flex; gap:7px; padding:12px 14px; border-bottom:1px solid var(--line); background:var(--panel2)}
   .demo .bar i{width:11px;height:11px;border-radius:50%;display:inline-block}
@@ -84,7 +85,6 @@
   .pill{display:inline-block;font-size:11px;color:#06101f;background:var(--grad);
     padding:2px 9px;border-radius:999px;font-weight:700;vertical-align:middle}
 
-  /* steps + cards */
   .grid{display:grid; gap:16px}
   .g3{grid-template-columns:repeat(3,1fr)} .g2{grid-template-columns:repeat(2,1fr)}
   .card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px 18px}
@@ -114,20 +114,21 @@
     <img src="logo.png" alt="lookover">
     <b>lookover</b>
     <span class="sp"></span>
-    <a class="ghost" href="#como">Como funciona</a>
-    <a class="ghost" href="#instalar">Instalar</a>
+    <a class="ghost" href="#how">How it works</a>
+    <a class="ghost" href="#install">Install</a>
     <a class="ghost" href="https://github.com/Espigah/lookover">GitHub</a>
   </nav>
 
   <header class="hero">
     <img class="mark" src="logo.png" alt="lookover">
-    <h1>Pergunte a um terminal<br>o que <span class="g">o outro está fazendo</span>.</h1>
-    <p class="lead">Cada sessão do Claude Code roda isolada. O <b>lookover</b> deixa você
-      referenciar outro terminal, por nome ou por descrição, e injeta o contexto dele
-      automaticamente. Tudo local, via hooks.</p>
+    <div class="eyebrow">look over your shoulder &nbsp;👀</div>
+    <h1>Ask one terminal<br>what <span class="g">the other is doing</span>.</h1>
+    <p class="lead">Every Claude Code session runs blind to the others. <b>lookover</b> lets you
+      reference another terminal, by name or by description, and injects its context automatically.
+      All local, via hooks.</p>
     <div class="cta">
-      <a class="btn primary" href="#instalar">Instalar</a>
-      <a class="btn ghost" href="https://github.com/Espigah/lookover">Ver no GitHub</a>
+      <a class="btn primary" href="#install">Install</a>
+      <a class="btn ghost" href="https://github.com/Espigah/lookover">View on GitHub</a>
     </div>
     <div class="badges">
       <img alt="license" src="https://img.shields.io/badge/license-MIT-3b82f6">
@@ -137,93 +138,93 @@
   </header>
 
   <section>
-    <h2>Na prática</h2>
-    <p class="sub">Você não roda comando nenhum. Só menciona o outro terminal num prompt normal.</p>
+    <h2>In practice</h2>
+    <p class="sub">You don't run any command. You just mention the other terminal in a normal prompt.</p>
     <div class="demo">
       <div class="bar"><i></i><i></i><i></i></div>
       <div class="body">
         <div class="turn">
-          <div class="who">você, no terminal de review</div>
-          <pre class="you">com base no terminal onde trato o oncall, por que o alerta xpto não foi tratado?</pre>
+          <div class="who">you, in your review terminal</div>
+          <pre class="you">based on the terminal where I handle on-call, why wasn't the xpto alert handled?</pre>
         </div>
         <div class="turn">
-          <div class="who">lookover <span class="pill">injeta automático</span></div>
-          <pre>&lt;&lt;&lt;LOOKOVER: contexto de outra sessão&gt;&gt;&gt;
+          <div class="who">lookover <span class="pill">auto-injected</span></div>
+          <pre>&lt;&lt;&lt;LOOKOVER: context from another session&gt;&gt;&gt;
 ## terminal oncall-terminal
-skill atual: oncall-patrolman
-- pediu: investiga o alerta xpto de chargeback
-- fato: alerta veio sem group_id
-&lt;&lt;&lt;FIM&gt;&gt;&gt;</pre>
+current skill: oncall-patrolman
+- asked: investigate the xpto chargeback alert
+- fact: alert arrived with no group_id
+&lt;&lt;&lt;END&gt;&gt;&gt;</pre>
         </div>
         <div class="turn">
           <div class="who">claude</div>
-          <pre>No terminal do oncall o alerta xpto parou porque chegou sem group_id…</pre>
+          <pre>In the on-call terminal the xpto alert stalled because it came in without a group_id…</pre>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="como">
-    <h2>Como funciona</h2>
-    <p class="sub">Três peças, todas locais. Nenhum daemon, nenhum servidor.</p>
+  <section id="how">
+    <h2>How it works</h2>
+    <p class="sub">Three pieces, all local. No daemon, no server.</p>
     <div class="grid g3">
-      <div class="card"><span class="n">1</span><h3>Captura</h3>
-        <p>Um hook leve (100% Go, zero token) grava um resumo enxuto de cada sessão: tópicos, skill em uso, fatos. Sem guardar conteúdo verbatim.</p></div>
+      <div class="card"><span class="n">1</span><h3>Capture</h3>
+        <p>A lightweight hook (100% Go, zero tokens) records a tight digest of each session: topics, the skill in use, facts. Never stores verbatim content.</p></div>
       <div class="card"><span class="n">2</span><h3>Resolve</h3>
-        <p>Ao mencionar outro terminal, varre as sessões vivas e ranqueia por nome, tópicos, repo e skill. Acha a certa, ou pede pra desambiguar.</p></div>
-      <div class="card"><span class="n">3</span><h3>Injeta</h3>
-        <p>O contexto da sessão alvo entra no seu prompt como dado (envelope anti-injection). O Claude responde já sabendo o que a outra fez.</p></div>
+        <p>When you mention another terminal, it scans the live sessions and ranks by name, topics, repo and skill. Finds the right one, or asks you to disambiguate.</p></div>
+      <div class="card"><span class="n">3</span><h3>Inject</h3>
+        <p>The target session's context enters your prompt as data (anti-injection envelope). Claude answers already knowing what the other one did.</p></div>
     </div>
   </section>
 
   <section>
-    <h2>Dois níveis de contexto</h2>
-    <p class="sub">Barato por padrão, profundo quando você precisa.</p>
+    <h2>Two levels of context</h2>
+    <p class="sub">Cheap by default, deep when you need it.</p>
     <div class="grid g2">
-      <div class="card"><h3>Resumo</h3>
-        <p>Tópicos e o que foi pedido, pra identificação rápida. É o que entra na maioria das vezes, custo mínimo de token.</p></div>
-      <div class="card"><h3>Conteúdo completo</h3>
-        <p>Peça “o texto completo”, “na íntegra”, “o que foi escrito” e o lookover lê o transcript real da outra sessão e injeta o conteúdo verbatim.</p></div>
+      <div class="card"><h3>Summary</h3>
+        <p>Topics and what was asked, for fast identification. This is what gets injected most of the time, at minimal token cost.</p></div>
+      <div class="card"><h3>Full content</h3>
+        <p>Ask for "the full text", "verbatim", "what was written" and lookover reads the target session's real transcript and injects the content word-for-word.</p></div>
     </div>
   </section>
 
-  <section id="instalar">
-    <h2>Instalar</h2>
-    <p class="sub">Requer Go 1.21+ e o Claude Code. O <code>init</code> mostra o diff do settings.json e só aplica após você confirmar.</p>
-    <pre class="cmd"><span class="muted"># clona e compila</span>
+  <section id="install">
+    <h2>Install</h2>
+    <p class="sub">Requires Go 1.21+ and Claude Code. <code>init</code> shows the settings.json diff and only applies after you confirm.</p>
+    <pre class="cmd"><span class="muted"># clone and build</span>
 git clone https://github.com/Espigah/lookover.git
 cd lookover
 go build -o ~/.local/bin/lookover ./cmd/lookover
 
-<span class="muted"># registra os hooks (interativo, com dry-run + backup)</span>
+<span class="muted"># register the hooks (interactive, with dry-run + backup)</span>
 lookover init</pre>
-    <p class="note">Reverter a qualquer momento com <code>lookover uninstall</code>. Kill switch instantâneo:
+    <p class="note">Roll back anytime with <code>lookover uninstall</code>. Instant kill switch:
       <code>touch ~/.claude/lookover/disabled</code>.</p>
   </section>
 
   <section>
-    <h2>Comandos</h2>
-    <p class="sub">Além da referência automática nos prompts, há uma CLI pra inspecionar.</p>
-    <pre class="cmd">lookover list                   <span class="muted"># sessões vivas + tópicos/skill</span>
-lookover show &lt;nome|id&gt;          <span class="muted"># o digest de uma sessão</span>
-lookover doctor                 <span class="muted"># saúde: sessões, digests, versão</span>
-lookover status                 <span class="muted"># adoção: vivas x cobertas</span></pre>
+    <h2>Commands</h2>
+    <p class="sub">Beyond the automatic in-prompt reference, there's a CLI to inspect.</p>
+    <pre class="cmd">lookover list                   <span class="muted"># live sessions + topics/skill</span>
+lookover show &lt;name|id&gt;          <span class="muted"># a session's digest</span>
+lookover doctor                 <span class="muted"># health: sessions, digests, version</span>
+lookover status                 <span class="muted"># adoption: live vs covered</span></pre>
   </section>
 
   <section>
-    <h2>Pensado pra não atrapalhar</h2>
-    <p class="sub">Roda em todo prompt; foi desenhado pra ser invisível quando não é preciso.</p>
+    <h2>Built to stay out of your way</h2>
+    <p class="sub">It runs on every prompt, and it's designed to be invisible when it isn't needed.</p>
     <ul class="clean">
-      <li><b>Custo zero no uso normal:</b> sem referência a outro terminal, não injeta nada.</li>
-      <li><b>Nunca quebra o Claude:</b> recover de panic, watchdog anti-hang, sempre sai limpo.</li>
-      <li><b>Anti prompt-injection:</b> nunca guarda output verbatim no resumo; tudo envelopado e sanitizado.</li>
-      <li><b>Sem servidor:</b> um arquivo por sessão, escrita atômica, resolução por varredura local.</li>
-      <li><b>Local de verdade:</b> nada sai pra rede além da compactação opcional por LLM (off por padrão).</li>
+      <li><b>Zero cost in normal use:</b> with no reference to another terminal, it injects nothing.</li>
+      <li><b>Never breaks Claude:</b> panic recovery, anti-hang watchdog, always exits cleanly.</li>
+      <li><b>Anti prompt-injection:</b> the summary never stores verbatim output; everything is enveloped and sanitized.</li>
+      <li><b>No server:</b> one file per session, atomic writes, resolution via a local scan.</li>
+      <li><b>Truly local:</b> nothing leaves your machine except the optional LLM compaction (off by default).</li>
     </ul>
   </section>
 
   <footer>
-    <p>Livre e open source sob a licença <b>MIT</b>.</p>
+    <p>Free and open source under the <b>MIT</b> license.</p>
     <p><a href="https://github.com/Espigah/lookover">github.com/Espigah/lookover</a></p>
   </footer>
 

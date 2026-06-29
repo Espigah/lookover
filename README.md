@@ -4,9 +4,11 @@
 
 <h1 align="center">lookover</h1>
 
+<p align="center"><b><i>look over your shoulder</i></b> — into your other Claude Code terminals.</p>
+
 <p align="center">
-  Pergunte de um terminal o que <b>outra sessão do Claude Code</b> está fazendo.<br>
-  O contexto da outra sessão é injetado automaticamente, basta mencioná-la.
+  Ask one terminal what <b>another Claude Code session</b> is doing.<br>
+  Its context is injected automatically, just mention it.
 </p>
 
 <p align="center">
@@ -18,88 +20,90 @@
 
 ---
 
-Cada sessão do Claude Code roda isolada: o Claude do terminal A não enxerga o terminal B. O
-**lookover** fecha esse buraco. Você referencia outro terminal, por nome ou por descrição, e o
-contexto dele entra no seu prompt antes do Claude responder.
+Every Claude Code session runs blind to the others: the Claude in terminal A can't see terminal B.
+**lookover** closes that gap. You reference another terminal, by name or by description, and its
+context enters your prompt before Claude answers, like glancing over your own shoulder at the
+session next to you.
 
 ```
-você:  com base no terminal slack-bridge-on-2, qual o último PR analisado?
-você:  no terminal onde trato o oncall, por que o alerta xpto não foi tratado?
+you:  based on the slack-bridge-on-2 terminal, what was the last PR we reviewed?
+you:  in the terminal where I handle on-call, why wasn't the xpto alert handled?
 ```
 
-## Como funciona
+## How it works
 
-- **Captura (100% Go, zero token):** um hook leve grava um resumo enxuto de cada sessão
-  (tópicos extraídos do prompt, skill em uso, fatos) em `~/.claude/lookover/<sessionId>.*.json`.
-  Nunca guarda conteúdo verbatim.
-- **Resolve:** ao detectar que você mencionou outro terminal, varre `~/.claude/sessions/` (nativo)
-  + os metas e ranqueia por score lexical (nome > tópicos > repo > fato > skill). Acha a sessão
-  certa, devolve uma shortlist se houver empate, ou diz quais estão abertas.
-- **Injeta:** o contexto entra como `additionalContext`, dentro de um envelope anti-injection
-  (marcado como dado, não instrução) e sanitizado.
+- **Capture (100% Go, zero tokens):** a lightweight hook records a tight digest of each session
+  (topics extracted from the prompt, the skill in use, facts) in
+  `~/.claude/lookover/<sessionId>.*.json`. Never stores verbatim content.
+- **Resolve:** when it detects you mentioned another terminal, it scans `~/.claude/sessions/`
+  (native) plus the metas and ranks by lexical score (name > topics > repo > fact > skill). Finds
+  the right session, returns a shortlist on a tie, or tells you which ones are open.
+- **Inject:** the context enters as `additionalContext`, inside an anti-injection envelope
+  (marked as data, not instructions) and sanitized.
 
-## Dois níveis de contexto
+## Two levels of context
 
-| Você escreve | O que entra |
+| You write | What gets injected |
 |---|---|
-| *"o que o terminal X fez?"* | **resumo**: tópicos + pedidos (barato, identificação) |
-| *"me mostra o **texto completo** do terminal X"* | **conteúdo verbatim** lido do transcript real da sessão |
+| *"what did terminal X do?"* | **summary**: topics + asks (cheap, for identification) |
+| *"show me the **full text** from terminal X"* | **verbatim content** read from the session's real transcript |
 
-O modo profundo é disparado por cues como *"texto completo", "na íntegra", "conteúdo",
-"o que foi escrito", "verbatim", "o parágrafo", "mostra tudo"*.
+Deep mode is triggered by cues like *"full text", "verbatim", "what was written", "the whole thing",
+"in full"*.
 
-## Instalar
+## Install
 
-Requer Go 1.21+ e o Claude Code.
+Requires Go 1.21+ and Claude Code.
 
 ```sh
 git clone https://github.com/Espigah/lookover.git
 cd lookover
 go build -o ~/.local/bin/lookover ./cmd/lookover
-lookover init        # mostra o diff do settings.json e só aplica após confirmar
+lookover init        # shows the settings.json diff and only applies after you confirm
 ```
 
-O `init` registra 4 hooks (SessionStart, UserPromptSubmit, PostToolUse, Stop), **preserva** hooks
-existentes, faz backup (`settings.json.bak`), registra as sessões já abertas (backfill) e oferece
-instalar um primer no `CLAUDE.md`. Reverter: `lookover uninstall`.
+`init` registers 4 hooks (SessionStart, UserPromptSubmit, PostToolUse, Stop), **preserves** existing
+hooks, makes a backup (`settings.json.bak`), registers already-open sessions (backfill) and offers
+to install a primer in `CLAUDE.md`. Roll back: `lookover uninstall`.
 
-Flags: `--llm` (liga a compactação opcional por LLM), `--shadow` (captura sem injetar),
-`--yes` (sem prompt), `-g` (global).
+Flags: `--llm` (enable the optional LLM compaction), `--shadow` (capture without injecting),
+`--yes` (no prompt), `-g` (global).
 
-## Comandos
+## Commands
 
-| comando | o quê |
+| command | what |
 |---|---|
-| `lookover list` | sessões vivas + skill/tópicos |
-| `lookover show <nome\|id>` | digest de uma sessão |
-| `lookover doctor` | diagnóstico de saúde |
-| `lookover status` | uso/adoção local |
-| `lookover uninstall` | remove os hooks |
+| `lookover list` | live sessions + skill/topics |
+| `lookover show <name\|id>` | a session's digest |
+| `lookover doctor` | health diagnostics |
+| `lookover status` | local usage/adoption |
+| `lookover uninstall` | remove the hooks |
 
-## Robustez e segurança
+## Robustness & security
 
-- **Custo zero no uso normal:** sem referência a outro terminal, o hook não injeta nada.
-- **Nunca quebra o Claude:** recover de panic, watchdog anti-hang, sempre exit 0.
-- **Anti prompt-injection:** o resumo nunca guarda output verbatim, só fatos derivados; injeção
-  sempre envelopada e sanitizada.
-- **Kill switch:** `touch ~/.claude/lookover/disabled` (ou `LOOKOVER_DISABLED=1`) desliga na hora.
-- **Sem servidor:** um arquivo por sessão, escrita atômica, resolução por varredura local.
+- **Zero cost in normal use:** with no reference to another terminal, the hook injects nothing.
+- **Never breaks Claude:** panic recovery, anti-hang watchdog, always exits 0.
+- **Anti prompt-injection:** the summary never stores verbatim output, only derived facts; injection
+  is always enveloped and sanitized.
+- **Kill switch:** `touch ~/.claude/lookover/disabled` (or `LOOKOVER_DISABLED=1`) turns it off instantly.
+- **No server:** one file per session, atomic writes, resolution via a local scan.
 
-## Desenvolvimento
+## Development
 
 ```sh
 go build ./...
 go test ./...
 ```
 
-Pacotes em `internal/`: `paths`, `config`, `sessions`, `store`, `hookio`, `capture`, `resolve`,
+Packages under `internal/`: `paths`, `config`, `sessions`, `store`, `hookio`, `capture`, `resolve`,
 `render`, `digest`, `transcript`, `settings`.
 
-## Privacidade
+## Privacy
 
-Tudo é local, em `~/.claude/lookover/`. Nada sai pra rede, com a única exceção da compactação
-opcional por LLM (off por padrão), que usa o `claude` que você já tem instalado.
+Everything is local, in `~/.claude/lookover/`. Nothing leaves your machine, with the single
+exception of the optional LLM compaction (off by default), which uses the `claude` binary you
+already have installed.
 
-## Licença
+## License
 
 MIT.
