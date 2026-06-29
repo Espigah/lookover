@@ -51,12 +51,35 @@ The full version kicks in when you ask for it, with words like *"full text", "wh
 
 ## Install
 
-Requires Go 1.21+ and Claude Code.
+**One line** (Linux, amd64/arm64):
+
+```sh
+curl -fsSL https://espigah.github.io/lookover/install.sh | bash
+```
+
+It grabs the latest release, drops the binary in `~/.local/bin`, and offers to turn it on.
+
+Prefer a package or the raw binary? Download a `.deb`, `.rpm`, `.tar.gz` or the executable from the
+[**releases page**](https://github.com/Espigah/lookover/releases/latest):
+
+```sh
+# Debian/Ubuntu
+sudo dpkg -i lookover_*_linux_amd64.deb
+# Fedora/RHEL
+sudo rpm -i lookover_*_linux_amd64.rpm
+```
+
+From source (needs Go 1.21+):
 
 ```sh
 git clone https://github.com/Espigah/lookover.git
 cd lookover
 go build -o ~/.local/bin/lookover ./cmd/lookover
+```
+
+Then turn it on:
+
+```sh
 lookover init        # shows the settings.json diff and only applies after you confirm
 ```
 

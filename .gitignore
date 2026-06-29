@@ -6,3 +6,6 @@
 # artefatos de teste
 *.out
 coverage.*
+
+# goreleaser
+/dist/

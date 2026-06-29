@@ -50,12 +50,12 @@
   .nav a.ghost{color:var(--muted); font-size:14px}
 
   /* hero */
-  .hero{padding:46px 0 30px; text-align:center}
-  .hero img.mark{width:128px;height:128px;border-radius:28px;
-    box-shadow:0 20px 60px rgba(34,113,238,.25); margin-bottom:22px}
-  .eyebrow{display:inline-block; font-size:clamp(15px,2vw,18px); font-weight:700; letter-spacing:.3px;
+  .hero{padding:60px 0 34px; text-align:center}
+  .hero img.mark{width:clamp(150px,22vw,200px);height:auto;border-radius:38px;
+    box-shadow:0 26px 70px rgba(34,113,238,.30); margin:0 auto 22px; display:block}
+  .tagline{font-size:clamp(22px,3.4vw,34px); font-weight:800; letter-spacing:.2px; line-height:1.1;
     background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;
-    border:1px solid var(--line); border-radius:999px; padding:7px 16px; margin-bottom:20px}
+    margin:0 auto 34px}
   .hero h1{font-size:clamp(30px,5vw,52px); line-height:1.1; margin:.1em 0 .35em; letter-spacing:-.5px}
   .hero h1 .g{background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent}
   .hero p.lead{font-size:clamp(17px,2.4vw,21px); color:var(--muted); max-width:680px; margin:0 auto 26px}
@@ -121,7 +121,7 @@
 
   <header class="hero">
     <img class="mark" src="logo.png" alt="lookover">
-    <div class="eyebrow">look over your shoulder &nbsp;👀</div>
+    <div class="tagline">look over your shoulder</div>
     <h1>Ask one terminal<br>what <span class="g">the other is doing</span>.</h1>
     <p class="lead">When you have Claude open in several terminals, each one only knows about itself.
       <b>lookover</b> lets you just mention another one, and it brings over what's happening there,
@@ -190,14 +190,11 @@ current skill: oncall-patrolman
 
   <section id="install">
     <h2>Install</h2>
-    <p class="sub">Requires Go and Claude Code. It shows you exactly what it will change and only goes ahead once you say yes.</p>
-    <pre class="cmd"><span class="muted"># clone and build</span>
-git clone https://github.com/Espigah/lookover.git
-cd lookover
-go build -o ~/.local/bin/lookover ./cmd/lookover
-
-<span class="muted"># register the hooks (interactive, with dry-run + backup)</span>
-lookover init</pre>
+    <p class="sub">One line. It downloads the latest version, sets it up, and shows you exactly what it changes before going ahead.</p>
+    <pre class="cmd">curl -fsSL https://espigah.github.io/lookover/install.sh | bash</pre>
+    <p class="note">Prefer a package? Grab a <code>.deb</code>, <code>.rpm</code> or <code>.tar.gz</code>
+      from the <a href="https://github.com/Espigah/lookover/releases/latest">releases page</a>.
+      Then turn it on with <code>lookover init</code>.</p>
     <p class="note">Changed your mind? <code>lookover uninstall</code> undoes everything. To pause it
       on the spot: <code>touch ~/.claude/lookover/disabled</code>.</p>
   </section>

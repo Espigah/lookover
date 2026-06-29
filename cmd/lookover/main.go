@@ -18,6 +18,9 @@ import (
 	"lookover/internal/store"
 )
 
+// version é injetada no build via -ldflags "-X main.version=...".
+var version = "dev"
+
 func main() {
 	if len(os.Args) < 2 {
 		usage()
@@ -41,7 +44,7 @@ func main() {
 	case "uninstall":
 		os.Exit(cmdUninstall())
 	case "version", "-v", "--version":
-		fmt.Println("lookover 0.1.0")
+		fmt.Println("lookover " + version)
 	default:
 		usage()
 		os.Exit(2)

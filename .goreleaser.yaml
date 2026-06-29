@@ -1,0 +1,71 @@
+# GoReleaser — builds lookover's Linux distribution artifacts.
+# Pure Go (no CGO), so a single runner cross-compiles every target.
+version: 2
+project_name: lookover
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: lookover
+    main: ./cmd/lookover
+    binary: lookover
+    env:
+      - CGO_ENABLED=0
+    goos: [linux]
+    goarch: [amd64, arm64]
+    ldflags:
+      - -s -w -X main.version={{ .Version }}
+
+archives:
+  - id: lookover
+    formats: [tar.gz]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - README.md
+      - LICENSE
+  # raw binary, for anyone who just wants the executable.
+  - id: rawbin
+    formats: [binary]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+# .deb (apt) and .rpm (dnf/yum) from a single config, via nfpm.
+nfpms:
+  - id: lookover
+    package_name: lookover
+    vendor: Espigah
+    homepage: https://github.com/Espigah/lookover
+    maintainer: Espigah <espigah@users.noreply.github.com>
+    description: Look over your shoulder into your other Claude Code terminals.
+    license: MIT
+    formats: [deb, rpm]
+    bindir: /usr/bin
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^ci:"
+      - "^test:"
+
+release:
+  github:
+    owner: Espigah
+    name: lookover
+  name_template: "lookover {{ .Version }}"
+  header: |
+    ## lookover {{ .Version }}
+
+    Look over your shoulder into your other Claude Code terminals.
+
+    ### Install (one line)
+    ```sh
+    curl -fsSL https://espigah.github.io/lookover/install.sh | bash
+    ```
+  footer: |
+    Then run `lookover init` to turn it on. Full docs: https://github.com/Espigah/lookover
