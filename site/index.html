@@ -51,7 +51,7 @@
 
   /* hero */
   .hero{padding:60px 0 34px; text-align:center}
-  .hero img.mark{width:clamp(150px,22vw,200px);height:auto;border-radius:38px;
+  .hero .mark{width:clamp(320px,62vw,580px);height:auto;border-radius:22px;
     box-shadow:0 26px 70px rgba(34,113,238,.30); margin:0 auto 22px; display:block}
   .tagline{font-size:clamp(22px,3.4vw,34px); font-weight:800; letter-spacing:.2px; line-height:1.1;
     background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;
@@ -120,7 +120,10 @@
   </nav>
 
   <header class="hero">
-    <img class="mark" src="logo.png" alt="lookover">
+    <video class="mark" autoplay loop muted playsinline poster="poster.jpg">
+      <source src="banner.mp4" type="video/mp4">
+      <img src="logo.png" alt="lookover" style="width:200px;height:auto;border-radius:38px">
+    </video>
     <div class="tagline">look over your shoulder</div>
     <h1>Ask one terminal<br>what <span class="g">the other is doing</span>.</h1>
     <p class="lead">When you have Claude open in several terminals, each one only knows about itself.
