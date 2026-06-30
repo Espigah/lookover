@@ -44,7 +44,7 @@ you:  in the terminal where I handle on-call, why wasn't the xpto alert handled?
 | You write | What you get |
 |---|---|
 | *"what did terminal X do?"* | a **quick peek**: a short note of what it's about |
-| *"show me the **full text** from terminal X"* | the **actual text** from that terminal, word for word |
+| *"show me the **full context** from terminal X"* | the **actual context** from that terminal, word for word |
 
 The full version kicks in when you ask for it, with words like *"full text", "what was written",
 "the whole thing", "in full"*.
