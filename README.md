@@ -12,9 +12,10 @@
 </p>
 
 <p align="center">
-  <img alt="license" src="https://img.shields.io/badge/license-MIT-3b82f6">
-  <img alt="go" src="https://img.shields.io/badge/Go-1.21%2B-22d3ee">
-  <img alt="claude code" src="https://img.shields.io/badge/Claude%20Code-hooks-6e9bff">
+  <a href="https://github.com/Espigah/lookover/releases/latest"><img alt="release" src="https://img.shields.io/github/v/release/Espigah/lookover?color=3b82f6&label=release"></a>
+  <a href="https://github.com/Espigah/lookover/releases/latest"><img alt="downloads" src="https://img.shields.io/github/downloads/Espigah/lookover/total?color=22d3ee&label=downloads"></a>
+  <img alt="license" src="https://img.shields.io/badge/license-MIT-6e9bff">
+  <img alt="go" src="https://img.shields.io/badge/Go-1.21%2B-8aa0c0">
   <a href="https://espigah.github.io/lookover/"><img alt="site" src="https://img.shields.io/badge/site-espigah.github.io%2Flookover-0a0f1e"></a>
 </p>
 
@@ -115,7 +116,7 @@ Flags: `--llm` (enable the optional LLM compaction), `--shadow` (capture without
   instructions.
 - **Off whenever you want:** `touch ~/.claude/lookover/disabled` (or `LOOKOVER_DISABLED=1`) pauses it
   on the spot.
-- **Nothing to manage:** no extra app or service running in the background.
+- **Nothing to manage:** no daemon and no server — it runs as a Claude Code hook.
 
 ## Development
 
