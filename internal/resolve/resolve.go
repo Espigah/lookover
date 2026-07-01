@@ -72,27 +72,31 @@ func Resolve(prompt, selfSessionID string) Outcome {
 		second = cands[1].Score
 	}
 	switch {
-	case top.Score >= 3.0 && top.Score >= second*2:
+	case top.Score < minScore:
+		// nada suficientemente forte: não injeta (evita falso positivo de
+		// match genérico/fraco, ex: um único tópico banal em comum).
+		out.Kind = "none"
+	case second < minScore || top.Score >= second*1.5:
+		// um candidato claramente à frente: LOCALIZADO -> dispara o dump profundo.
 		out.Kind = "winner"
 		out.Winner = top
-	case top.Score > 0:
-		out.Kind = "shortlist"
-		n := 0
+	default:
+		// dois+ candidatos fortes e próximos: ambíguo de verdade, pede desambiguação.
 		for _, c := range cands {
-			if c.Score <= 0 || n >= 3 {
+			if c.Score < minScore || len(out.Shortlist) >= 3 {
 				break
 			}
 			out.Shortlist = append(out.Shortlist, c)
-			n++
 		}
-		if len(out.Shortlist) == 1 {
-			// um só candidato plausível porém fraco: trata como winner brando
-			out.Kind = "winner"
-			out.Winner = out.Shortlist[0]
-		}
+		out.Kind = "shortlist"
 	}
 	return out
 }
+
+// minScore é o piso pra considerar que o prompt referencia mesmo uma sessão.
+// Match por nome vale ~10, então referências reais passam folgado; matches
+// genéricos (1 tópico banal = 2) ficam abaixo e não injetam nada.
+const minScore = 3.0
 
 func tokenSet(s string) map[string]bool {
 	set := map[string]bool{}

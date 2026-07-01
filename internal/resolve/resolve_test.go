@@ -66,6 +66,15 @@ func TestResolveNoneOnUnknownReference(t *testing.T) {
 	}
 }
 
+func TestWeakGenericMatchIsNone(t *testing.T) {
+	setup(t)
+	// "index" é um único tópico de A; match fraco (score 2) não deve injetar.
+	out := Resolve("mexi no index hoje, e no terminal?", "sess-B")
+	if out.Kind != "none" {
+		t.Fatalf("match fraco de 1 tópico deveria ser none, veio %s", out.Kind)
+	}
+}
+
 func TestSelfExcluded(t *testing.T) {
 	setup(t)
 	// A referenciando o próprio nome não deve resolver A

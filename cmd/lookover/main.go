@@ -41,6 +41,8 @@ func main() {
 		os.Exit(cmdDoctor())
 	case "status":
 		os.Exit(cmdStatus())
+	case "resolve":
+		os.Exit(cmdResolve(os.Args[2:]))
 	case "uninstall":
 		os.Exit(cmdUninstall())
 	case "version", "-v", "--version":
@@ -181,7 +183,12 @@ func maybeInject(in hookio.Input, selfID string, cfg config.Config) {
 		// Um terminal claramente referenciado SEMPRE traz o conteúdo real (lê o
 		// transcript), senão o resumo de tópicos não responde nada. O gatilho de
 		// "conteúdo completo" só amplia o orçamento pra puxar mais histórico.
+		// Localizado: dump generoso do contexto recente (piso de 8KB, mesmo que
+		// a config salva seja menor). O cue "conteúdo completo" amplia pro máximo.
 		budget := cfg.InjectBudgetBytes
+		if budget < 8*1024 {
+			budget = 8 * 1024
+		}
 		if resolve.IsDeep(in.Prompt) {
 			budget = cfg.DeepBudgetBytes
 		}
@@ -360,6 +367,26 @@ func cmdDoctor() int {
 		}
 	}
 	fmt.Printf("  digests stale: %d  parse-falho: %d\n", stale, noParse)
+	return 0
+}
+
+// cmdResolve é um debug: mostra intenção, scores e a decisão pra um prompt.
+func cmdResolve(args []string) int {
+	if len(args) < 1 {
+		fmt.Fprintln(os.Stderr, `uso: lookover resolve "<prompt>"`)
+		return 2
+	}
+	prompt := strings.Join(args, " ")
+	fmt.Printf("intent=%v  deep=%v\n", resolve.HasIntent(prompt), resolve.IsDeep(prompt))
+	out := resolve.Resolve(prompt, "")
+	fmt.Printf("decisão: %s\n", out.Kind)
+	for _, c := range out.Live {
+		name := c.Sess.Name
+		if name == "" {
+			name = short(c.Sess.SessionID)
+		}
+		fmt.Printf("  %6.2f  %-30s %s\n", c.Score, name, strings.Join(c.Meta.Topics, ","))
+	}
 	return 0
 }
 
