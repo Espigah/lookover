@@ -39,15 +39,15 @@ you:  in the terminal where I handle on-call, why wasn't the xpto alert handled?
 - **It brings the context over:** that goes to Claude as background info (kept clearly separate, so
   it's never read as commands), and Claude answers already knowing what the other terminal did.
 
-## A quick peek, or the whole thing
+## Recent context, or the whole thing
 
 | You write | What you get |
 |---|---|
-| *"what did terminal X do?"* | a **quick peek**: a short note of what it's about |
-| *"show me the **full context** from terminal X"* | the **actual context** from that terminal, word for word |
+| *"what did terminal X do?"* | its **recent context**: what you asked there and what came back |
+| *"show me the **full context** from terminal X"* | more of it, reaching further back, word for word |
 
-The full version kicks in when you ask for it, with words like *"full text", "what was written",
-"the whole thing", "in full"*.
+Naming a terminal already brings its real context. Asking for more, with words like *"full context",
+"what was written", "the whole thing", "in full"*, reaches further back.
 
 ## Install
 

@@ -178,12 +178,14 @@ func maybeInject(in hookio.Input, selfID string, cfg config.Config) {
 	out := resolve.Resolve(in.Prompt, selfID)
 	switch out.Kind {
 	case "winner":
+		// Um terminal claramente referenciado SEMPRE traz o conteúdo real (lê o
+		// transcript), senão o resumo de tópicos não responde nada. O gatilho de
+		// "conteúdo completo" só amplia o orçamento pra puxar mais histórico.
+		budget := cfg.InjectBudgetBytes
 		if resolve.IsDeep(in.Prompt) {
-			// fetch profundo on-demand: conteúdo verbatim, orçamento maior
-			hookio.EmitContext(render.DeepWinner(out.Winner, cfg.DeepBudgetBytes))
-		} else {
-			hookio.EmitContext(render.Winner(out.Winner, cfg.InjectBudgetBytes))
+			budget = cfg.DeepBudgetBytes
 		}
+		hookio.EmitContext(render.DeepWinner(out.Winner, budget))
 	case "shortlist":
 		hookio.EmitContext(render.Shortlist(out.Shortlist, cfg.InjectBudgetBytes))
 	default:

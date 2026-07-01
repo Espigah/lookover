@@ -7,10 +7,27 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"lookover/internal/paths"
 )
+
+// ruído injetado que não faz parte da conversa real (não deve poluir o fetch).
+var (
+	reSysReminder = regexp.MustCompile(`(?s)<system-reminder>.*?</system-reminder>`)
+	reLookover    = regexp.MustCompile(`(?s)<<<LOOKOVER.*?<<<FIM LOOKOVER>>>`)
+	reCmdWrap     = regexp.MustCompile(`(?s)<(?:local-)?command-[a-z-]+>.*?</(?:local-)?command-[a-z-]+>`)
+	reCmdStdout   = regexp.MustCompile(`(?s)<local-command-stdout>.*?</local-command-stdout>`)
+)
+
+func clean(s string) string {
+	s = reSysReminder.ReplaceAllString(s, "")
+	s = reLookover.ReplaceAllString(s, "")
+	s = reCmdStdout.ReplaceAllString(s, "")
+	s = reCmdWrap.ReplaceAllString(s, "")
+	return strings.TrimSpace(s)
+}
 
 // tailWindow é quanto lemos do fim do arquivo (bytes). Cobre várias mensagens
 // recentes sem carregar o transcript inteiro.
@@ -83,8 +100,8 @@ func Tail(path string, maxBytes int) ([]Msg, error) {
 			continue
 		}
 		role, _ := msg["role"].(string)
-		text := extractText(msg["content"])
-		if strings.TrimSpace(text) == "" {
+		text := clean(extractText(msg["content"]))
+		if text == "" {
 			continue
 		}
 		msgs = append(msgs, Msg{Role: role, Text: text})
