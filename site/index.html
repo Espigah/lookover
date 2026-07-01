@@ -73,6 +73,9 @@
   h2{font-size:clamp(22px,3vw,30px); margin:0 0 6px; letter-spacing:-.3px}
   .sub{color:var(--muted); margin:0 0 26px}
 
+  .shot{margin:0 0 12px; border:1px solid var(--line); border-radius:14px; overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  .shot img{display:block; width:100%; height:auto}
   .demo{background:var(--panel); border:1px solid var(--line); border-radius:16px; overflow:hidden}
   .demo .bar{display:flex; gap:7px; padding:12px 14px; border-bottom:1px solid var(--line); background:var(--panel2)}
   .demo .bar i{width:11px;height:11px;border-radius:50%;display:inline-block}
@@ -143,28 +146,10 @@
   <section>
     <h2>In practice</h2>
     <p class="sub">You don't run any command. You just mention the other terminal in a normal prompt.</p>
-    <div class="demo">
-      <div class="bar"><i></i><i></i><i></i></div>
-      <div class="body">
-        <div class="turn">
-          <div class="who">you, in your review terminal</div>
-          <pre class="you">based on the terminal where I handle on-call, why wasn't the xpto alert handled?</pre>
-        </div>
-        <div class="turn">
-          <div class="who">lookover <span class="pill">auto-injected</span></div>
-          <pre>&lt;&lt;&lt;LOOKOVER: context from another session&gt;&gt;&gt;
-## terminal oncall-terminal
-current skill: oncall-patrolman
-- asked: investigate the xpto chargeback alert
-- fact: alert arrived with no user_id
-&lt;&lt;&lt;END&gt;&gt;&gt;</pre>
-        </div>
-        <div class="turn">
-          <div class="who">claude</div>
-          <pre>In the on-call terminal the xpto alert stalled because it came in without a user_id…</pre>
-        </div>
-      </div>
-    </div>
+    <figure class="shot">
+      <img src="demo.gif" alt="lookover in action: one terminal asks another Claude Code session about its story, and the hero's color is answered from the other session's context" loading="lazy">
+    </figure>
+    <p class="note">One terminal wrote a story; from another, we ask for the hero's color, and lookover brings that context over automatically.</p>
   </section>
 
   <section id="how">

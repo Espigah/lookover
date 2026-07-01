@@ -30,6 +30,13 @@ you:  based on the slack-bridge-on-2 terminal, what was the last PR we reviewed?
 you:  in the terminal where I handle on-call, why wasn't the xpto alert handled?
 ```
 
+## In practice
+
+One terminal wrote a story; from another, we ask for the hero's color, and lookover brings that
+context over automatically.
+
+![lookover in action](site/demo.gif)
+
 ## How it works
 
 - **It takes notes:** each terminal quietly keeps short notes on what it's doing, what you asked and
