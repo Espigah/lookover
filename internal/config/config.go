@@ -27,7 +27,8 @@ type Config struct {
 	Shadow bool `json:"shadow"`
 	// OptOutDirs: cwds (prefixos) onde a captura é desligada.
 	OptOutDirs []string `json:"optOutDirs"`
-	// TestedClaudeVersion é a versão do CC validada por último (auto-degrade).
+	// TestedClaudeVersion é a versão do CC validada por último. A compatibilidade
+	// é avaliada só por feature (major.minor), então patch (2.1.n) não conta.
 	TestedClaudeVersion string `json:"testedClaudeVersion"`
 }
 

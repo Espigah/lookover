@@ -36,6 +36,18 @@ func Alive(pid int) bool {
 	return err == nil || err == syscall.EPERM
 }
 
+// FeatureVersion reduz uma versão do Claude Code (ex: "2.1.195") à sua versão
+// de feature "2.1". A compatibilidade do lookover é avaliada SÓ por major.minor:
+// mudanças de patch (o terceiro número) não contam, "2.1.n" sempre funciona
+// igual e o contexto continua sendo injetado normalmente.
+func FeatureVersion(v string) string {
+	parts := strings.SplitN(v, ".", 3)
+	if len(parts) >= 2 {
+		return parts[0] + "." + parts[1]
+	}
+	return v
+}
+
 // Scan lê todas as sessões. onlyLive filtra processos mortos.
 func Scan(onlyLive bool) ([]Session, error) {
 	dir := paths.SessionsDir()

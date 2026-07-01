@@ -347,9 +347,13 @@ func cmdDoctor() int {
 			if !m.LastParseOk {
 				noParse++
 			}
-			if cfg.TestedClaudeVersion != "" && m.ClaudeVersion != "" && m.ClaudeVersion != cfg.TestedClaudeVersion {
-				fmt.Printf("  AVISO: sessão %s na versão %s (testada %s) — modo observa\n",
-					short(s.SessionID), m.ClaudeVersion, cfg.TestedClaudeVersion)
+			// Compatibilidade é só por versão de FEATURE (major.minor). Patch
+			// (2.1.n) nunca conta: injeção segue normal. Só uma mudança de
+			// feature (ex: 2.1 -> 2.2) merece atenção.
+			if cfg.TestedClaudeVersion != "" && m.ClaudeVersion != "" &&
+				sessions.FeatureVersion(m.ClaudeVersion) != sessions.FeatureVersion(cfg.TestedClaudeVersion) {
+				fmt.Printf("  AVISO: sessão %s na feature %s (testada %s) — revalide com o doctor\n",
+					short(s.SessionID), sessions.FeatureVersion(m.ClaudeVersion), sessions.FeatureVersion(cfg.TestedClaudeVersion))
 			}
 		}
 	}
