@@ -23,8 +23,14 @@ var version = "dev"
 
 func main() {
 	if len(os.Args) < 2 {
+		// Alguns runners de hook (ex: Cursor lendo o settings.json do Claude)
+		// ignoram o campo `args` e executam o binário sem o "hook". Se veio stdin
+		// de pipe, tratamos como hook e NUNCA bloqueamos.
+		if stdinIsPiped() {
+			cmdHook()
+		}
 		usage()
-		os.Exit(2)
+		os.Exit(0)
 	}
 	switch os.Args[1] {
 	case "hook":
@@ -48,9 +54,18 @@ func main() {
 	case "version", "-v", "--version":
 		fmt.Println("lookover " + version)
 	default:
+		if stdinIsPiped() {
+			cmdHook()
+		}
 		usage()
-		os.Exit(2)
+		os.Exit(0)
 	}
+}
+
+// stdinIsPiped diz se o stdin é um pipe/arquivo (chamada de hook), não um terminal.
+func stdinIsPiped() bool {
+	fi, err := os.Stdin.Stat()
+	return err == nil && (fi.Mode()&os.ModeCharDevice) == 0
 }
 
 func usage() {
@@ -100,6 +115,15 @@ func cmdHook() {
 	time.AfterFunc(5*time.Second, func() { os.Exit(0) })
 
 	in := hookio.Read()
+
+	// 2.5) só age se for MESMO do Claude Code. Outros agentes (ex: Cursor lendo
+	// o settings.json) podem invocar o binário; nesses casos no-op (exit 0),
+	// nunca captura nem injeta nada.
+	if !isClaudeCode(in) {
+		logf("invocação ignorada: não parece ser do Claude Code (event=%q)", in.HookEventName)
+		return
+	}
+
 	cfg := config.Load()
 
 	// 3) resolução multi-fonte do sessionId/cwd (resiliência)
@@ -198,6 +222,32 @@ func maybeInject(in hookio.Input, selfID string, cfg config.Config) {
 	default:
 		hookio.EmitContext(render.None(out.Live, cfg.InjectBudgetBytes))
 	}
+}
+
+// isClaudeCode confirma que a invocação é de fato do Claude Code (e não de
+// outro agente, como o Cursor, que pode ler o mesmo settings.json). Sinais, do
+// mais forte pro mais fraco:
+//   - env CLAUDE_PROJECT_DIR / CLAUDE_* (setado pelo Claude Code nos hooks);
+//   - session_id do stdin corresponde a uma sessão real em ~/.claude/sessions/;
+//   - ppid/cwd resolvem pra uma sessão real do Claude Code.
+// Nenhum bateu -> não é Claude Code.
+func isClaudeCode(in hookio.Input) bool {
+	for _, e := range os.Environ() {
+		if strings.HasPrefix(e, "CLAUDE_PROJECT_DIR=") ||
+			strings.HasPrefix(e, "CLAUDE_CODE") ||
+			strings.HasPrefix(e, "CLAUDECODE=") {
+			return true
+		}
+	}
+	if in.SessionID != "" {
+		if _, ok := sessions.ByID(in.SessionID); ok {
+			return true
+		}
+	}
+	if _, ok := sessions.FindByPidCwd(os.Getppid(), cwdOf(in)); ok {
+		return true
+	}
+	return false
 }
 
 // resolveSelf descobre a sessão do hook: stdin → ppid → cwd único.
